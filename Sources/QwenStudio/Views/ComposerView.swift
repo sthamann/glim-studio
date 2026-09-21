@@ -32,6 +32,7 @@ struct ComposerView: View {
                                     ZStack(alignment: .topTrailing) {
                                         if let image = NSImage(contentsOf: url) {
                                             Image(nsImage: image).resizable().scaledToFill().frame(width: 78,height: 72).clipped().clipShape(RoundedRectangle(cornerRadius: 8))
+                                                .overlay(alignment: .bottomLeading) { Text("\(index + 1)").font(.caption.bold()).padding(4).background(.regularMaterial, in: Circle()).padding(4) }
                                         }
                                         Button { store.references.remove(at: index) } label: { Image(systemName: "xmark.circle.fill").symbolRenderingMode(.palette).foregroundStyle(.white, .black.opacity(0.65)) }.buttonStyle(.plain).padding(3).help("Remove reference")
                                     }
@@ -48,18 +49,32 @@ struct ComposerView: View {
                             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [5,4])))
                         }.buttonStyle(.plain)
                         .dropDestination(for: URL.self) { urls, _ in store.importImages(urls); return !urls.isEmpty } isTargeted: { dropTarget = $0 }
+                        PhotoLibraryButton(store: store)
+                        if store.references.count > 1 {
+                            Text("Describe how to combine the images. Refer to them as image 1, image 2, and so on. The first image sets the output shape.")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
                     }
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Aspect ratio").font(.subheadline.weight(.medium))
                         if store.references.isEmpty {
+                            Picker("Format preset", selection: $store.formatPreset) {
+                                Text("Custom aspect ratio").tag(Optional<FormatPreset>.none)
+                                ForEach(FormatPreset.allCases) { preset in Text(preset.title).tag(Optional(preset)) }
+                            }
+                            if let preset = store.formatPreset {
+                                Text("\(preset.dimensionsLabel) · saved size").font(.caption.weight(.medium))
+                                Text(preset.guidance).font(.caption).foregroundStyle(.secondary)
+                                Text("Draft is rendered smaller and resized; use 2K for finer detail.").font(.caption2).foregroundStyle(.secondary)
+                            }
                             HStack(spacing: 5) {
                                 ForEach(Aspect.allCases) { aspect in
-                                    Button { store.aspect = aspect } label: {
+                                    Button { store.aspect = aspect; store.formatPreset = nil } label: {
                                         VStack(spacing: 7) { Image(systemName: aspect.symbol).font(.system(size: 19)); Text(aspect.rawValue).font(.caption2) }
                                             .frame(maxWidth: .infinity).frame(height: 60)
-                                            .background(store.aspect == aspect ? Color.indigo.opacity(0.13) : Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 9))
-                                            .foregroundStyle(store.aspect == aspect ? Color.indigo : Color.secondary)
-                                    }.buttonStyle(.plain).accessibilityLabel("Format \(aspect.rawValue)").accessibilityAddTraits(store.aspect == aspect ? .isSelected : [])
+                                            .background(store.formatPreset == nil && store.aspect == aspect ? Color.indigo.opacity(0.13) : Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 9))
+                                            .foregroundStyle(store.formatPreset == nil && store.aspect == aspect ? Color.indigo : Color.secondary)
+                                    }.buttonStyle(.plain).accessibilityLabel("Format \(aspect.rawValue)").accessibilityAddTraits(store.formatPreset == nil && store.aspect == aspect ? .isSelected : [])
                                 }
                             }
                         } else { Label("Matches your first reference", systemImage: "aspectratio").font(.caption).foregroundStyle(.secondary) }

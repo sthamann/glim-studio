@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 final class StudioStore: ObservableObject {
     @Published var prompt = ""
     @Published var aspect: Aspect = .square
+    @Published var formatPreset: FormatPreset?
     @Published var quality: Quality = .standard
     @Published var transparent = false
     @Published var steps = 40
@@ -14,11 +15,13 @@ final class StudioStore: ObservableObject {
     @Published var selected: UUID?
     @Published var showLibrary = false
     @Published var generating = false
+    @Published var importingPhoto = false
     @Published var cancelling = false
     @Published var progress: Double = 0
     @Published var previewImage: NSImage?
     @Published var phase = ""
     @Published var error: String?
+    @Published var copiedImageID: UUID?
     @Published var startedAt: Date?
     @Published var fixedSeed = ""
     private var generationTask: Task<Void, Never>?
@@ -28,7 +31,7 @@ final class StudioStore: ObservableObject {
         ?? RuntimeManager.support.appendingPathComponent("Bilder")
     var current: Creation? { creations.first { $0.id == selected } }
     var currentImage: NSImage? { current.flatMap { NSImage(contentsOf: url(for: $0)) } }
-    var canGenerate: Bool { !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !generating }
+    var canGenerate: Bool { !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !generating && !importingPhoto }
 
     init() {
         if ProcessInfo.processInfo.physicalMemory < 32 * 1_073_741_824 { quality = .draft; steps = 20 }
@@ -42,10 +45,11 @@ final class StudioStore: ObservableObject {
     }
     func url(for creation: Creation) -> URL { library.appendingPathComponent(creation.fileName) }
     func newImage() {
-        guard !generating else { return }
+        guard !generating, !importingPhoto else { return }
         selected = nil; showLibrary = false; references = []; prompt = ""
     }
     func useExample(_ text: String, transparent: Bool = false) {
+        guard !generating, !importingPhoto else { return }
         prompt = text; self.transparent = transparent; selected = nil; showLibrary = false
     }
     func chooseImages() {
@@ -76,23 +80,55 @@ final class StudioStore: ObservableObject {
         } catch { self.error = error.localizedDescription }
     }
     func useAsReference(_ creation: Creation) {
+        useAsReferences([creation])
+    }
+    func useAsReferences(_ items: [Creation]) {
         guard !generating else { return }
-        references = [url(for: creation)]; prompt = ""; selected = creation.id; showLibrary = false
+        guard !items.isEmpty, items.count <= 10 else { error = "Choose between 1 and 10 reference images."; return }
+        references = items.map { url(for: $0) }; prompt = ""; selected = nil; showLibrary = false; formatPreset = nil
+    }
+    func preparePhotoReference(_ data: Data) throws -> URL {
+        guard !generating else { throw StudioError.message("Wait for the current image to finish before adding a photo.") }
+        guard references.count < 10 else { throw StudioError.message("You can add up to 10 reference images.") }
+        guard let image = NSImage(data: data), let tiff = image.tiffRepresentation,
+              let rep = NSBitmapImageRep(data: tiff), let png = rep.representation(using: .png, properties: [:]) else {
+            throw StudioError.message("This photo could not be opened as an image.")
+        }
+        let directory = RuntimeManager.support.appendingPathComponent("Vorlagen")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = directory.appendingPathComponent(UUID().uuidString + ".png")
+        try png.write(to: destination, options: .atomic)
+        return destination
     }
     func reusePrompt(_ creation: Creation) {
         guard !generating else { return }
         prompt = creation.prompt; aspect = creation.aspect; quality = creation.quality
         transparent = creation.transparent; steps = creation.steps
-        references = []; selected = creation.id; showLibrary = false
+        references = []; selected = nil; showLibrary = false; formatPreset = creation.formatPreset
     }
     func export(_ creation: Creation) {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.png]
-        panel.nameFieldStringValue = "Lichtbild-\(creation.date.formatted(.iso8601.year().month().day())).png"
+        panel.title = "Save image as"
+        panel.nameFieldStringValue = "Glim-\(creation.date.formatted(.iso8601.year().month().day())).png"
         if panel.runModal() == .OK, let destination = panel.url {
             do { try Data(contentsOf: url(for: creation)).write(to: destination, options: .atomic) }
             catch { self.error = "Could not save: \(error.localizedDescription)" }
         }
+    }
+    func copyImage(_ creation: Creation) {
+        do {
+            try ImageOutput.copy(Data(contentsOf: url(for: creation)))
+            copiedImageID = creation.id
+            Task {
+                try? await Task.sleep(for: .seconds(2))
+                if copiedImageID == creation.id { copiedImageID = nil }
+            }
+        } catch { self.error = error.localizedDescription }
+    }
+    func printImage(_ creation: Creation) {
+        guard let image = NSImage(contentsOf: url(for: creation)) else { error = "Could not open this image for printing."; return }
+        ImageOutput.printImage(image)
     }
     func generate(using engine: LocalEngine) {
         guard canGenerate else { return }
@@ -101,7 +137,8 @@ final class StudioStore: ObservableObject {
         else if let value = Int(fixedSeed), value >= 0, value <= Int(UInt32.max) { seed = value }
         else { error = "Seed must be between 0 and 4,294,967,295, or empty."; return }
         let request = GenerationRequest(prompt: prompt.trimmingCharacters(in: .whitespacesAndNewlines), aspect: aspect, quality: quality,
-                                        transparent: transparent, steps: steps, seed: seed, references: references)
+                                        transparent: transparent, steps: steps, seed: seed, references: references,
+                                        formatPreset: references.isEmpty ? formatPreset : nil)
         generating = true; cancelling = false; progress = 0; previewImage = nil; startedAt = Date(); selected = nil; showLibrary = false
         phase = "Loading the model and preparing your prompt …"; promptID = nil
         generationTask = Task {
@@ -150,8 +187,9 @@ final class StudioStore: ObservableObject {
                     if let data = try await engine.result(id: id) {
                         guard NSImage(data: data) != nil else { throw StudioError.message("The engine did not return a valid image.") }
                         let creation = Creation(id: UUID(), date: Date(), prompt: request.prompt, fileName: UUID().uuidString + ".png", seed: seed,
-                                                aspect: request.aspect, quality: request.quality, transparent: request.transparent, steps: request.steps, referenceCount: request.references.count)
-                        try data.write(to: url(for: creation), options: .atomic)
+                                                aspect: request.aspect, quality: request.quality, transparent: request.transparent, steps: request.steps, referenceCount: request.references.count,
+                                                formatPreset: request.formatPreset)
+                        try ImageOutput.fittedPNG(data, preset: request.formatPreset).write(to: url(for: creation), options: .atomic)
                         let updated = [creation] + creations
                         try JSONEncoder().encode(updated).write(to: library.appendingPathComponent("library.json"), options: .atomic)
                         creations = updated; selected = creation.id; phase = "Done"; progress = 1

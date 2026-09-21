@@ -21,11 +21,11 @@ enum Quality: String, CaseIterable, Codable, Identifiable {
 }
 
 enum Aspect: String, CaseIterable, Codable, Identifiable {
-    case square = "1:1", landscape = "4:3", portrait = "3:4", wide = "16:9", story = "9:16"
+    case square = "1:1", landscape = "4:3", portrait = "3:4", photoLandscape = "3:2", photoPortrait = "2:3", wide = "16:9", story = "9:16"
     var id: String { rawValue }
-    var symbol: String { self == .square ? "square" : (self == .portrait || self == .story ? "rectangle.portrait" : "rectangle") }
+    var symbol: String { self == .square ? "square" : (self == .portrait || self == .photoPortrait || self == .story ? "rectangle.portrait" : "rectangle") }
     func size(quality: Quality) -> (Int, Int) {
-        let sizes: [Aspect: (Int, Int)] = [.square: (2048,2048), .landscape: (2400,1792), .portrait: (1792,2400), .wide: (2752,1536), .story: (1536,2752)]
+        let sizes: [Aspect: (Int, Int)] = [.square: (2048,2048), .landscape: (2400,1792), .portrait: (1792,2400), .photoLandscape: (2528,1696), .photoPortrait: (1696,2528), .wide: (2752,1536), .story: (1536,2752)]
         let (w,h) = sizes[self]!
         let divisor = quality == .detail ? 1 : (quality == .draft ? 4 : 2)
         return (max(32, (w / divisor / 32) * 32), max(32, (h / divisor / 32) * 32))
@@ -43,6 +43,7 @@ struct Creation: Codable, Identifiable {
     let transparent: Bool
     let steps: Int
     let referenceCount: Int
+    var formatPreset: FormatPreset? = nil
 }
 
 struct GenerationRequest {
@@ -53,6 +54,8 @@ struct GenerationRequest {
     let steps: Int
     let seed: Int
     let references: [URL]
+    var formatPreset: FormatPreset? = nil
+    var dimensions: (Int, Int) { formatPreset?.renderSize(quality: quality) ?? aspect.size(quality: quality) }
     var effectivePrompt: String {
         transparent ? "This is an RGBA image with transparency. \(prompt). The image has alpha channel and the background is transparent." : prompt
     }

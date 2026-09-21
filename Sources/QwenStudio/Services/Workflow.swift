@@ -2,7 +2,7 @@ import Foundation
 
 enum Workflow {
     static func make(_ request: GenerationRequest, uploaded: [String], precision: ModelPrecision = .full) -> [String: Any] {
-        let (w,h) = request.aspect.size(quality: request.quality)
+        let (w,h) = request.dimensions
         var conditioning: [String: Any] = ["clip": ["2",0], "prompt": request.effectivePrompt,
                                           "negative_prompt": "", "resolution": request.quality.referenceSize]
         var graph: [String: Any] = [

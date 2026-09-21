@@ -1,4 +1,12 @@
-Glim Studio now opens with an empty canvas. Clicking Create also clears the previously selected image while keeping your draft prompt and settings. Saved images remain available in My images and Recent images.
+Glim Studio 0.2 adds native Apple Photos selection, multi-image composition and everyday image actions.
+
+- Select up to 10 Apple Photos items, in order, from My images or the editor.
+- Select several generated images in My images and use them together as references.
+- Copy images to the clipboard, Save as, Print, and start a new edit from a generated image.
+- 15 social/business format presets with exact saved dimensions, plus 3:2 and 2:3 aspect ratios.
+- Create opens with an empty canvas; previous images remain in the library.
+
+Preset sizes are applied by resizing and a small center crop. Draft does not produce native high-resolution detail. The X article cover is a suggested layout; check its crop in X.
 
 Glim Studio turns your ideas into images, entirely on your Mac.
 

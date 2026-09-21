@@ -35,10 +35,19 @@ struct LichtbildApp: App {
                 Button("Add reference images …") { store.chooseImages() }.keyboardShortcut("o").disabled(store.generating)
             }
             CommandGroup(after: .saveItem) {
-                Button("Export image …") { if let c = store.current { store.export(c) } }
+                Button("Save image as …") { if let c = store.current { store.export(c) } }
                     .keyboardShortcut("s").disabled(store.current == nil)
             }
+            CommandGroup(replacing: .printItem) {
+                Button("Print image …") { if let c = store.current { store.printImage(c) } }
+                    .keyboardShortcut("p").disabled(store.current == nil)
+            }
             CommandMenu("Image") {
+                Button("Copy image") { if let c = store.current { store.copyImage(c) } }
+                    .keyboardShortcut("c", modifiers: [.command, .shift]).disabled(store.current == nil)
+                Button("Use as reference") { if let c = store.current { store.useAsReference(c) } }
+                    .disabled(store.current == nil || store.generating)
+                Divider()
                 Button("Create image") { store.generate(using: runtime.engine) }.keyboardShortcut(.return, modifiers: .command)
                     .disabled(!runtime.ready || !store.canGenerate)
                 Button("Cancel") { store.cancel(using: runtime.engine) }.keyboardShortcut(".").disabled(!store.generating)

@@ -34,10 +34,18 @@ No inference account, API key, or cloud GPU is required. The app contacts GitHub
 
 - **Create and edit** with Qwen-Image-2.1.
 - **Live pixel previews** that follow the actual denoising process.
-- **Reference images** — up to ten inputs; one-image edits have been tested end to end.
+- **Reference images** — up to ten inputs, with numbered references and multiple selection in My images.
+- **Apple Photos picker** in My images and the editor. Choose several photos at once; the app receives only your selected items. iCloud-only originals may first need downloading by Photos.
 - **Transparent PNGs** for stickers and isolated subjects.
-- **Draft, Standard and 2K** resolutions, plus five aspect ratios.
-- **Local history**, prompt reuse, image export and cancellation.
+- **Draft, Standard and 2K** resolutions, seven aspect ratios and 15 social/business format presets.
+- **Copy, Save as, Print and Use as reference** directly from your finished image; keyboard shortcuts and library context menus included.
+- **Local history**, prompt reuse and cancellation. Create starts with an empty canvas.
+
+### Ready for where your image goes
+
+Choose a **Format preset** for X profile headers/pictures and article covers; LinkedIn profile banners/pictures, company covers, article/newsletter covers and link posts; social square/portrait/story layouts; or presentations, website heroes, products and A4 covers. The saved PNG has the preset's exact dimensions. Drafts render smaller and are resized; select 2K for more generated detail. A small center crop reconciles the model grid with the output ratio. Reference edits continue to follow the first reference's shape.
+
+The X article cover is a suggested 5:2 layout, not an officially verified X requirement. Platform crops and overlays can vary. See [preset dimensions and sources](docs/formats.md).
 - **Secure app updates** using Sparkle, signed archives and signed update feeds. Use **Glim Studio → Check for Updates…**.
 
 ![Editing an image](docs/media/editing.jpg)

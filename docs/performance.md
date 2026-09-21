@@ -15,6 +15,17 @@ The BF16 backend comparison uses the same prompt, resolution and step count, but
 
 Compact-process lifetime peak physical footprint after the 512² and 1024² runs: **13.76 GiB**. MLX BF16 allocated roughly 43 GiB of arrays at peak; one in-flight process footprint observation was about 49.3 GiB. These are different measurements and precisions, not an apples-to-apples memory comparison. RSS alone can undercount mapped or compressed memory.
 
+## Experimental step reuse (EasyCache)
+
+A new paired engineering probe used the same ceramic-cup prompt, seed 42, BF16 weights, Euler/simple sampler and 40 steps. Each resolution had a separate warm-up; prompt encoding and weights were cached for both variants. Wall times include one-second result polling.
+
+| Resolution | Normal | EasyCache | Ratio |
+|---|---:|---:|---:|
+| 512² | 29.14 s | 12.06 s | 2.42× |
+| 1024² | 125.60 s | 47.24 s | 2.66× |
+
+Settings: reuse threshold 0.2, start 0.15, end 0.95. The 512² run skipped 25 of 40 model evaluations. The cup composition remained similar, but shape, edges and surface details changed. These are single examples, **not evidence of equivalent quality**. Text, faces, reference editing and RGBA still need controlled comparisons before shipping a fast mode. EasyCache is **not enabled in the released app**. This is separate from Qwen's already-active prefix cache.
+
 ## Optimization priorities
 
 1. **Fewer steps.** 20 rather than 40 roughly halves the iterative part, not total time. Texture, text and difficult edits need quality comparisons. The app exposes the step setting; Draft uses 20, Standard 40.

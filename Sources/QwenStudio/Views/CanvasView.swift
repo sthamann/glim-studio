@@ -12,7 +12,9 @@ struct CanvasView: View {
                 }
                 Spacer()
                 if let current = store.current, !store.generating {
-                    Button { store.export(current) } label: { Label("Export", systemImage: "square.and.arrow.up") }
+                    Button { store.copyImage(current) } label: { Label(store.copiedImageID == current.id ? "Copied" : "Copy", systemImage: "doc.on.doc") }.help("Copy image · ⇧⌘C")
+                    Button { store.export(current) } label: { Label("Save as …", systemImage: "square.and.arrow.down") }
+                    Button { store.printImage(current) } label: { Image(systemName: "printer") }.help("Print … · ⌘P").accessibilityLabel("Print image")
                 }
             }.padding(28)
             ZStack {
