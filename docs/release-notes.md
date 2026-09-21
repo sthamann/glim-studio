@@ -1,4 +1,4 @@
-Update verification is now enabled before archive extraction, completing the signed-feed security requirements.
+Glim Studio now opens with an empty canvas. Clicking Create also clears the previously selected image while keeping your draft prompt and settings. Saved images remain available in My images and Recent images.
 
 Glim Studio turns your ideas into images, entirely on your Mac.
 

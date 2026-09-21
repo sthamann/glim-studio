@@ -7,7 +7,10 @@ struct SidebarView: View {
         VStack(spacing: 0) {
             List {
                 Section("YOUR STUDIO") {
-                    Button { store.showLibrary = false } label: { Label("Create", systemImage: "sparkles") }
+                    Button {
+                        store.selected = nil
+                        store.showLibrary = false
+                    } label: { Label("Create", systemImage: "sparkles") }
                     Button { store.showLibrary = true } label: { Label("My images", systemImage: "square.grid.2x2") }
                 }
                 if !store.creations.isEmpty {

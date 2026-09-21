@@ -37,7 +37,6 @@ final class StudioStore: ObservableObject {
             let index = library.appendingPathComponent("library.json")
             if FileManager.default.fileExists(atPath: index.path) {
                 creations = try JSONDecoder().decode([Creation].self, from: Data(contentsOf: index))
-                selected = creations.first?.id
             }
         } catch { self.error = "Could not read the image library: \(error.localizedDescription)" }
     }
