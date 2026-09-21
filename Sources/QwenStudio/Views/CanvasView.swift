@@ -21,9 +21,9 @@ struct CanvasView: View {
                 RoundedRectangle(cornerRadius: 20).fill(.quaternary.opacity(0.18))
                 if store.generating {
                     GenerationPreviewView(store: store)
-                } else if let image = store.currentImage {
+                } else if let creation = store.current {
                     Checkerboard().clipShape(RoundedRectangle(cornerRadius: 20))
-                    Image(nsImage: image).resizable().scaledToFit().padding(18)
+                    LocalImageView(url: store.url(for: creation), maxPixelSize: 2_560).padding(18)
                 } else {
                     VStack(spacing: 22) {
                         ZStack {

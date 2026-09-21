@@ -31,7 +31,6 @@ final class StudioStore: ObservableObject {
     let library = ProcessInfo.processInfo.environment["GLIM_DEMO_LIBRARY"].map { URL(fileURLWithPath: $0) }
         ?? RuntimeManager.support.appendingPathComponent("Bilder")
     var current: Creation? { creations.first { $0.id == selected } }
-    var currentImage: NSImage? { current.flatMap { NSImage(contentsOf: url(for: $0)) } }
     var canGenerate: Bool { !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !generating && !importingPhoto }
 
     init() {

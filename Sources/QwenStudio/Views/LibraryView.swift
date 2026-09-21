@@ -38,10 +38,9 @@ struct LibraryView: View {
                                 } else { store.selected = creation.id; store.showLibrary = false }
                             } label: {
                                 VStack(alignment: .leading, spacing: 10) {
-                                    if let image = NSImage(contentsOf: store.url(for: creation)) {
-                                        Image(nsImage: image).resizable().scaledToFit().frame(height: 175).frame(maxWidth: .infinity)
+                                    LocalImageView(url: store.url(for: creation), maxPixelSize: 640)
+                                            .frame(height: 175).frame(maxWidth: .infinity)
                                             .background(.quaternary.opacity(0.2), in: RoundedRectangle(cornerRadius: 12))
-                                    }
                                     Text(creation.prompt).lineLimit(2).font(.subheadline)
                                     Text(creation.date.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
                                 }.overlay(alignment: .topTrailing) {

@@ -30,10 +30,9 @@ struct ComposerView: View {
                             LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))], spacing: 8) {
                                 ForEach(Array(store.references.enumerated()), id: \.element) { index, url in
                                     ZStack(alignment: .topTrailing) {
-                                        if let image = NSImage(contentsOf: url) {
-                                            Image(nsImage: image).resizable().scaledToFill().frame(width: 78,height: 72).clipped().clipShape(RoundedRectangle(cornerRadius: 8))
+                                        LocalImageView(url: url, maxPixelSize: 256, contentMode: .fill)
+                                            .frame(width: 78,height: 72).clipped().clipShape(RoundedRectangle(cornerRadius: 8))
                                                 .overlay(alignment: .bottomLeading) { Text("\(index + 1)").font(.caption.bold()).padding(4).background(.regularMaterial, in: Circle()).padding(4) }
-                                        }
                                         Button { store.references.remove(at: index) } label: { Image(systemName: "xmark.circle.fill").symbolRenderingMode(.palette).foregroundStyle(.white, .black.opacity(0.65)) }.buttonStyle(.plain).padding(3).help("Remove reference")
                                     }
                                 }
