@@ -34,6 +34,7 @@ No inference account, API key, or cloud GPU is required. The app contacts GitHub
 
 - **Create and edit** with Qwen-Image-2.1.
 - **Live pixel previews** that follow the actual denoising process.
+- **Optional Fast mode** under Advanced, reusing intermediate results. Experimental: fine details and lettering can change; keep it off for final-quality work.
 - **Reference images** — up to ten inputs, with numbered references and multiple selection in My images.
 - **Apple Photos picker** in My images and the editor. Choose several photos at once; the app receives only your selected items. iCloud-only originals may first need downloading by Photos.
 - **Transparent PNGs** for stickers and isolated subjects.
@@ -62,11 +63,15 @@ The X article cover is a suggested 5:2 layout, not an officially verified X requ
 
 Allow additional disk space for Python, dependencies, temporary downloads and your images. **24 GB or more is recommended, not yet a measured MacBook guarantee.** Current real-world measurements are from an M3 Ultra Mac Studio with 512 GB RAM. A compact 1024² test reached approximately 13.8 GiB of process physical footprint, before allowing for macOS and other apps. 16 GB machines may swap heavily.
 
+Below 32 GB, Glim releases cached models after saving each finished image. This frees memory between jobs; it does not reduce the generation peak. The next image may take longer to start.
+
 ### Honest performance
 
 On that M3 Ultra, a 1024² image with 40 steps took **124.6 seconds with the current MPS engine** and **122.7 seconds with an experimental MLX backend**. These are single runs, not a statistically significant MLX win. Drafts are substantially quicker; fewer steps trade refinement for speed. See [measurements, limitations and next optimizations](docs/performance.md).
 
 The app ships the tested MPS engine. The experimental MLX comparison is included for research; it is not the production engine.
+
+A new sequential 4-bit MLX research probe completed 512² and 1024² images with **5.62 and 5.79 GiB** peak process physical footprint, including loading, on the M3 Ultra. This is promising for smaller Macs, but is **not shipped as the app backend and not a real 8/16 GB hardware test**. See [small-Mac probes, limitations and reproduction](docs/small-macs.md).
 
 ## Install
 

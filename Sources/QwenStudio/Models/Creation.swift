@@ -44,6 +44,7 @@ struct Creation: Codable, Identifiable {
     let steps: Int
     let referenceCount: Int
     var formatPreset: FormatPreset? = nil
+    var fastMode: Bool? = nil
 }
 
 struct GenerationRequest {
@@ -55,6 +56,7 @@ struct GenerationRequest {
     let seed: Int
     let references: [URL]
     var formatPreset: FormatPreset? = nil
+    var fastMode = false
     var dimensions: (Int, Int) { formatPreset?.renderSize(quality: quality) ?? aspect.size(quality: quality) }
     var effectivePrompt: String {
         transparent ? "This is an RGBA image with transparency. \(prompt). The image has alpha channel and the background is transparent." : prompt

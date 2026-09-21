@@ -17,6 +17,9 @@ parser.add_argument("--name", required=True)
 parser.add_argument("--reference")
 parser.add_argument("--transparent", action="store_true")
 parser.add_argument("--seed", type=int, default=42)
+parser.add_argument("--prompt")
+parser.add_argument("--easy-cache", action="store_true")
+parser.add_argument("--memory-log", type=Path, default=Path.home() / "Library/Application Support/Lichtbild Studio/runtime/memory.jsonl")
 args = parser.parse_args()
 base = f"http://127.0.0.1:{args.port}"
 def call(path, body=None):
@@ -30,6 +33,8 @@ if args.transparent:
     prompt = "This is an RGBA image with transparency. A charming little orange fox reading a book, hand-drawn sticker illustration. The image has alpha channel and the background is transparent."
 if args.reference:
     prompt = "Change the ceramic cup to deep cobalt blue. Keep the shape, pedestal, lighting and composition unchanged."
+if args.prompt:
+    prompt = args.prompt
 graph = {
  "1": {"class_type": "UNETLoader", "inputs": {"unet_name": f"qwen_image_2.1_{args.precision}.safetensors", "weight_dtype": "default"}},
  "2": {"class_type": "CLIPLoader", "inputs": {"clip_name": f"qwen3vl_8b_{args.precision}.safetensors", "type": "qwen_image", "device": "default"}},
@@ -44,6 +49,9 @@ if args.reference:
     graph["20"] = {"class_type": "LoadImage", "inputs": {"image": args.reference}}
     graph["4"]["inputs"].update({"images.image_1": ["20",0], "vae": ["3",0]})
     graph["6"]["inputs"]["latent_image"] = ["4",2]
+if args.easy_cache:
+    graph["30"] = {"class_type": "EasyCache", "inputs": {"model": ["1",0], "reuse_threshold": 0.2, "start_percent": 0.15, "end_percent": 0.95, "verbose": False}}
+    graph["6"]["inputs"]["model"] = ["30",0]
 start = time.time()
 job = call("/prompt", {"prompt": graph, "client_id": str(uuid.uuid4())})
 print("Submitted", job, flush=True)
@@ -53,11 +61,13 @@ while time.time() - start < 1800:
     if job_id in history:
         record = history[job_id]
         elapsed = time.time() - start
-        memory = Path.home() / "Library/Application Support/Lichtbild Studio/runtime/memory.jsonl"
+        memory = args.memory_log
         samples = [json.loads(line) for line in memory.read_text().splitlines()] if memory.exists() else []
         samples = [s for s in samples if start <= s["time"] <= time.time()]
         result = {"name": args.name, "started_at": start, "elapsed_seconds": elapsed, "size": args.size,
-                  "steps": args.steps, "precision": args.precision, "hardware": "Mac Studio M3 Ultra 80 GPU cores 512 GiB",
+                  "steps": args.steps, "precision": args.precision,
+                  "hardware": subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"], text=True).strip(),
+                  "physical_memory_bytes": int(subprocess.check_output(["sysctl", "-n", "hw.memsize"])),
                   "status": record.get("status"), "outputs": record.get("outputs"), "prompt": prompt,
                   "peak": {key: max((s[key] for s in samples), default=None) for key in ["rss_bytes", "mps_allocated_bytes", "mps_driver_bytes"]}}
         # Kernel physical footprint includes compressed private pages, unlike RSS.
@@ -70,9 +80,17 @@ while time.time() - start < 1800:
             result["physical_footprint_bytes_at_finish"] = usage.values[7]
             result["process_lifetime_peak_physical_footprint_bytes"] = usage.values[28]
         result["seed"] = args.seed
+        result["easy_cache"] = args.easy_cache
+        result["graph"] = graph
         dest = Path("outputs/performance")
         dest.mkdir(parents=True, exist_ok=True)
         (dest / (args.name + ".json")).write_text(json.dumps(result, indent=2))
+        if record.get("status", {}).get("status_str") != "success":
+            raise RuntimeError("Generation failed; see recorded status")
+        from urllib.parse import urlencode
+        output = record["outputs"]["8"]["images"][0]
+        with urllib.request.urlopen(base + "/view?" + urlencode(output), timeout=60) as image:
+            (dest / (args.name + ".png")).write_bytes(image.read())
         print(json.dumps(result, indent=2), flush=True)
         break
     time.sleep(1)

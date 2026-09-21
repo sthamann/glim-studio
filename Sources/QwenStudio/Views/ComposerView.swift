@@ -90,6 +90,9 @@ struct ComposerView: View {
                     }.toggleStyle(.switch).controlSize(.small)
                     DisclosureGroup("Advanced") {
                         VStack(alignment: .leading, spacing: 12) {
+                            Toggle("Fast mode · experimental", isOn: $store.fastMode)
+                            Text("Reuses intermediate results to save time. Fine details, faces and lettering can change. Turn off for your final image.")
+                                .font(.caption).foregroundStyle(.secondary)
                             Stepper("Steps: \(store.steps)", value: $store.steps, in: 10...60, step: 5)
                             TextField("Seed (leave empty for a new variation)", text: $store.fixedSeed).textFieldStyle(.roundedBorder)
                             Text("40 steps is the official recommendation. Use a fixed seed to compare variations.").font(.caption).foregroundStyle(.secondary)
@@ -106,7 +109,7 @@ struct ComposerView: View {
                     Button { store.generate(using: runtime.engine) } label: { Label(store.references.isEmpty ? "Create image" : "Edit image", systemImage: "sparkles").fontWeight(.semibold).frame(maxWidth: .infinity).padding(.vertical, 8) }
                         .buttonStyle(.borderedProminent).disabled(!runtime.ready || !store.canGenerate)
                 }
-                Text(runtime.ready ? "Locally on your Mac · ⌘↩" : "Ready after setup").font(.caption2).foregroundStyle(.secondary)
+                Text(runtime.ready ? (store.fastMode ? "Experimental Fast mode · ⌘↩" : "Locally on your Mac · ⌘↩") : "Ready after setup").font(.caption2).foregroundStyle(.secondary)
             }.padding(20)
         }
     }

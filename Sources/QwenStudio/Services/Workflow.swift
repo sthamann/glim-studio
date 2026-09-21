@@ -23,6 +23,15 @@ enum Workflow {
             conditioning["images.image_\(index + 1)"] = [id,0]
         }
         graph["4"] = ["class_type": "TextEncodeQwenImage21", "inputs": conditioning]
+        if request.fastMode {
+            graph["30"] = ["class_type": "EasyCache", "inputs": ["model": ["1",0], "reuse_threshold": 0.2,
+                            "start_percent": 0.15, "end_percent": 0.95, "verbose": false]]
+            var sampler = graph["6"] as! [String: Any]
+            var inputs = sampler["inputs"] as! [String: Any]
+            inputs["model"] = ["30",0]
+            sampler["inputs"] = inputs
+            graph["6"] = sampler
+        }
         return graph
     }
 }

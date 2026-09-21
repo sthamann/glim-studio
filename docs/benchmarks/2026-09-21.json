@@ -1,0 +1,434 @@
+{
+  "mlx-q4-512-20-budget12": {
+    "convert": false,
+    "checkpoint": "work/qwen21-mlx-q4",
+    "name": "mlx-q4-512-20-budget12",
+    "size": 512,
+    "steps": 20,
+    "budget_gib": 12.0,
+    "prompt": "A handmade ivory ceramic cup on a sandstone pedestal, soft morning light, elegant product photography, warm cream background, detailed ceramic texture.",
+    "status": "budget_exceeded",
+    "phase": "generate",
+    "started_at": 1789965325.580864,
+    "hardware": "Apple M3 Ultra",
+    "physical_memory_bytes": 549755813888,
+    "limitation": "Budget probe on this hardware, NOT validation on a small Mac. Text encoder q4 is experimental; upstream disables its quantization due to semantic degradation.",
+    "load_seconds": 1.8773540002293885,
+    "loaded_memory": {
+      "time": 1789965328.753362,
+      "phase": "load",
+      "physical_footprint_bytes": 10137477016,
+      "lifetime_peak_physical_footprint_bytes": 10146914200
+    },
+    "memory": {
+      "time": 1789965347.461071,
+      "phase": "generate",
+      "physical_footprint_bytes": 13603545224,
+      "lifetime_peak_physical_footprint_bytes": 13603545224
+    }
+  },
+  "mlx-q4-release-512-20-budget12": {
+    "convert": false,
+    "checkpoint": "work/qwen21-mlx-q4",
+    "name": "mlx-q4-release-512-20-budget12",
+    "size": 512,
+    "steps": 20,
+    "release_between_phases": true,
+    "tiled_decode": false,
+    "budget_gib": 12.0,
+    "prompt": "A handmade ivory ceramic cup on a sandstone pedestal, soft morning light, elegant product photography, warm cream background, detailed ceramic texture.",
+    "status": "success",
+    "phase": "decode",
+    "started_at": 1789965382.506419,
+    "hardware": "Apple M3 Ultra",
+    "physical_memory_bytes": 549755813888,
+    "limitation": "Budget probe on this hardware, NOT validation on a small Mac. Text encoder q4 is experimental; upstream disables its quantization due to semantic degradation.",
+    "load_seconds": 1.9005869580432773,
+    "loaded_memory": {
+      "time": 1789965385.687232,
+      "phase": "load",
+      "physical_footprint_bytes": 10132791216,
+      "lifetime_peak_physical_footprint_bytes": 10142228400
+    },
+    "generation_seconds": 15.599036541767418,
+    "mlx_peak_bytes": 9766399749,
+    "memory": {
+      "time": 1789965401.286536,
+      "phase": "decode",
+      "physical_footprint_bytes": 2608564768,
+      "lifetime_peak_physical_footprint_bytes": 10691665984
+    },
+    "elapsed_seconds": 18.780145168304443
+  },
+  "mlx-q4-release-1024-20-budget12": {
+    "convert": false,
+    "checkpoint": "work/qwen21-mlx-q4",
+    "name": "mlx-q4-release-1024-20-budget12",
+    "size": 1024,
+    "steps": 20,
+    "release_between_phases": true,
+    "tiled_decode": true,
+    "budget_gib": 12.0,
+    "prompt": "A handmade ivory ceramic cup on a sandstone pedestal, soft morning light, elegant product photography, warm cream background, detailed ceramic texture.",
+    "status": "success",
+    "phase": "decode",
+    "started_at": 1789965432.670793,
+    "hardware": "Apple M3 Ultra",
+    "physical_memory_bytes": 549755813888,
+    "limitation": "Budget probe on this hardware, NOT validation on a small Mac. Text encoder q4 is experimental; upstream disables its quantization due to semantic degradation.",
+    "load_seconds": 1.9177797087468207,
+    "loaded_memory": {
+      "time": 1789965435.900806,
+      "phase": "load",
+      "physical_footprint_bytes": 10139885512,
+      "lifetime_peak_physical_footprint_bytes": 10149322696
+    },
+    "generation_seconds": 66.88835437502712,
+    "mlx_peak_bytes": 9766399749,
+    "memory": {
+      "time": 1789965502.7897449,
+      "phase": "decode",
+      "physical_footprint_bytes": 2370898488,
+      "lifetime_peak_physical_footprint_bytes": 10698449008
+    },
+    "elapsed_seconds": 70.11898493766785
+  },
+  "mlx-q4-sequential-512-20-budget6": {
+    "convert": false,
+    "checkpoint": "work/qwen21-mlx-q4",
+    "name": "mlx-q4-sequential-512-20-budget6",
+    "size": 512,
+    "steps": 20,
+    "release_between_phases": true,
+    "tiled_decode": true,
+    "sequential_load": true,
+    "budget_gib": 6.0,
+    "prompt": "A handmade ivory ceramic cup on a sandstone pedestal, soft morning light, elegant product photography, warm cream background, detailed ceramic texture.",
+    "status": "success",
+    "phase": "decode",
+    "started_at": 1789965542.665013,
+    "hardware": "Apple M3 Ultra",
+    "physical_memory_bytes": 549755813888,
+    "limitation": "Budget probe on this hardware, NOT validation on a small Mac. Text encoder q4 is experimental; upstream disables its quantization due to semantic degradation.",
+    "load_seconds": 1.6462225830182433,
+    "loaded_memory": {
+      "time": 1789965545.620235,
+      "phase": "load",
+      "physical_footprint_bytes": 4796420320,
+      "lifetime_peak_physical_footprint_bytes": 4796420320
+    },
+    "generation_seconds": 16.057695374824107,
+    "mlx_peak_bytes": 5041153040,
+    "memory": {
+      "time": 1789965561.678187,
+      "phase": "decode",
+      "physical_footprint_bytes": 2393672104,
+      "lifetime_peak_physical_footprint_bytes": 6034264312
+    },
+    "elapsed_seconds": 19.013190746307373
+  },
+  "mlx-q4-sequential-1024-20-budget6": {
+    "convert": false,
+    "checkpoint": "work/qwen21-mlx-q4",
+    "name": "mlx-q4-sequential-1024-20-budget6",
+    "size": 1024,
+    "steps": 20,
+    "release_between_phases": true,
+    "tiled_decode": true,
+    "sequential_load": true,
+    "budget_gib": 6.0,
+    "prompt": "A handmade ivory ceramic cup on a sandstone pedestal, soft morning light, elegant product photography, warm cream background, detailed ceramic texture.",
+    "status": "success",
+    "phase": "decode",
+    "started_at": 1789965580.70491,
+    "hardware": "Apple M3 Ultra",
+    "physical_memory_bytes": 549755813888,
+    "limitation": "Budget probe on this hardware, NOT validation on a small Mac. Text encoder q4 is experimental; upstream disables its quantization due to semantic degradation.",
+    "load_seconds": 1.6931818746961653,
+    "loaded_memory": {
+      "time": 1789965583.7160819,
+      "phase": "load",
+      "physical_footprint_bytes": 4794814688,
+      "lifetime_peak_physical_footprint_bytes": 4794814688
+    },
+    "generation_seconds": 66.87476383382455,
+    "mlx_peak_bytes": 5264860176,
+    "memory": {
+      "time": 1789965650.591451,
+      "phase": "decode",
+      "physical_footprint_bytes": 2363476440,
+      "lifetime_peak_physical_footprint_bytes": 6218862864
+    },
+    "elapsed_seconds": 69.88658094406128
+  },
+  "mlx-q4-sequential-text-512-40-budget6": {
+    "convert": false,
+    "checkpoint": "work/qwen21-mlx-q4",
+    "name": "mlx-q4-sequential-text-512-40-budget6",
+    "size": 512,
+    "steps": 40,
+    "release_between_phases": true,
+    "tiled_decode": true,
+    "sequential_load": true,
+    "budget_gib": 6.0,
+    "prompt": "A clean graphic poster with the exact large text \"HELLO GLIM\" centered on a solid navy background. Bold white sans serif letters. A small orange circle below.",
+    "status": "success",
+    "phase": "decode",
+    "started_at": 1789966055.0612721,
+    "mflux_commit": "8c00dab2505a96019df9d30bc9c223bf20d733c4",
+    "hardware": "Apple M3 Ultra",
+    "physical_memory_bytes": 549755813888,
+    "limitation": "Budget probe on this hardware, NOT validation on a small Mac. Text encoder q4 is experimental; upstream disables its quantization due to semantic degradation.",
+    "load_seconds": 2.0120795001275837,
+    "loaded_memory": {
+      "time": 1789966059.46726,
+      "phase": "load",
+      "physical_footprint_bytes": 4795765008,
+      "lifetime_peak_physical_footprint_bytes": 4795765008
+    },
+    "generation_seconds": 39.370088916737586,
+    "mlx_peak_bytes": 5047444640,
+    "memory": {
+      "time": 1789966098.837754,
+      "phase": "decode",
+      "physical_footprint_bytes": 2439842408,
+      "lifetime_peak_physical_footprint_bytes": 6101651824
+    },
+    "elapsed_seconds": 43.77649784088135
+  },
+  "mlx-q4-sequential-portrait-512-40-budget6": {
+    "convert": false,
+    "checkpoint": "work/qwen21-mlx-q4",
+    "name": "mlx-q4-sequential-portrait-512-40-budget6",
+    "size": 512,
+    "steps": 40,
+    "release_between_phases": true,
+    "tiled_decode": true,
+    "sequential_load": true,
+    "budget_gib": 6.0,
+    "prompt": "A studio portrait of a fictional elderly woman with short silver hair, round glasses and a green knitted scarf, neutral background, natural skin texture, soft window light.",
+    "status": "success",
+    "phase": "decode",
+    "started_at": 1789966099.3012779,
+    "mflux_commit": "8c00dab2505a96019df9d30bc9c223bf20d733c4",
+    "hardware": "Apple M3 Ultra",
+    "physical_memory_bytes": 549755813888,
+    "limitation": "Budget probe on this hardware, NOT validation on a small Mac. Text encoder q4 is experimental; upstream disables its quantization due to semantic degradation.",
+    "load_seconds": 1.6871342496015131,
+    "loaded_memory": {
+      "time": 1789966102.365386,
+      "phase": "load",
+      "physical_footprint_bytes": 4794552568,
+      "lifetime_peak_physical_footprint_bytes": 4794552568
+    },
+    "generation_seconds": 33.980657583102584,
+    "mlx_peak_bytes": 5047051408,
+    "memory": {
+      "time": 1789966136.346411,
+      "phase": "decode",
+      "physical_footprint_bytes": 2391263728,
+      "lifetime_peak_physical_footprint_bytes": 6074569024
+    },
+    "elapsed_seconds": 37.0451500415802
+  },
+  "mps-compact-release-512-20": {
+    "name": "mps-compact-release-512-20",
+    "started_at": 1789966015.600252,
+    "elapsed_seconds": 39.299806118011475,
+    "size": 512,
+    "steps": 20,
+    "precision": "int8_convrot",
+    "hardware": "Mac Studio M3 Ultra 80 GPU cores 512 GiB",
+    "status": {
+      "status_str": "success",
+      "completed": true
+    },
+    "outputs": {
+      "8": {
+        "images": [
+          {
+            "filename": "benchmark_mps-compact-release-512-20_00001_.png",
+            "subfolder": "",
+            "type": "output"
+          }
+        ]
+      }
+    },
+    "prompt": "A handmade ivory ceramic cup on a sandstone pedestal, soft morning light, elegant product photography, warm cream background, detailed ceramic texture.",
+    "peak": {
+      "rss_bytes": 8958115840,
+      "mps_allocated_bytes": 8103923200,
+      "mps_driver_bytes": 9733652480
+    },
+    "physical_footprint_bytes_at_finish": 2283457536,
+    "process_lifetime_peak_physical_footprint_bytes": 12007230488,
+    "seed": 42,
+    "easy_cache": false,
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "qwen_image_2.1_int8_convrot.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen3vl_8b_int8_convrot.safetensors",
+          "type": "qwen_image",
+          "device": "default"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_2.1_vae_bf16.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "TextEncodeQwenImage21",
+        "inputs": {
+          "clip": [
+            "2",
+            0
+          ],
+          "prompt": "A handmade ivory ceramic cup on a sandstone pedestal, soft morning light, elegant product photography, warm cream background, detailed ceramic texture.",
+          "negative_prompt": "",
+          "resolution": 512
+        }
+      },
+      "5": {
+        "class_type": "EmptyLatentImage",
+        "inputs": {
+          "width": 512,
+          "height": 512,
+          "batch_size": 1
+        }
+      },
+      "6": {
+        "class_type": "KSampler",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "positive": [
+            "4",
+            0
+          ],
+          "negative": [
+            "4",
+            1
+          ],
+          "latent_image": [
+            "5",
+            0
+          ],
+          "seed": 42,
+          "steps": 20,
+          "cfg": 1,
+          "sampler_name": "euler",
+          "scheduler": "simple",
+          "denoise": 1
+        }
+      },
+      "7": {
+        "class_type": "VAEDecode",
+        "inputs": {
+          "samples": [
+            "6",
+            0
+          ],
+          "vae": [
+            "3",
+            0
+          ]
+        }
+      },
+      "8": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "7",
+            0
+          ],
+          "filename_prefix": "benchmark_mps-compact-release-512-20"
+        }
+      }
+    }
+  },
+  "idle-memory-release": {
+    "before_bytes": 10079330752,
+    "after_bytes": 608602032,
+    "samples_bytes": [
+      10417906112,
+      10422149568,
+      10423116224,
+      10424246720,
+      10425704896,
+      10427228608,
+      944490416,
+      944490416,
+      944490416,
+      608946096,
+      608946096,
+      608946096,
+      608602032,
+      608602032,
+      608602032,
+      608602032,
+      608602032,
+      608602032,
+      608602032,
+      608602032
+    ],
+    "note": "Idle cache release only, not a reduction in generation peak. Engine stays alive; next job reloads weights."
+  },
+  "q4-loading-equivalence": {
+    "all_loaded_vs_sequential_same_q4_1024_tiled_pixel_identical": true,
+    "note": "Same q4 weights, seed 42, 20 steps and tiled decoder. This verifies phase loading only, not q4 equivalence to BF16."
+  },
+  "cache_suite": [
+    {
+      "name": "cache-suite-int8_convrot-text-normal",
+      "seconds": 54.28468298912048,
+      "success": true
+    },
+    {
+      "name": "cache-suite-int8_convrot-text-fast",
+      "seconds": 20.12229013442993,
+      "success": true
+    },
+    {
+      "name": "cache-suite-int8_convrot-portrait-normal",
+      "seconds": 54.32560324668884,
+      "success": true
+    },
+    {
+      "name": "cache-suite-int8_convrot-portrait-fast",
+      "seconds": 22.116123914718628,
+      "success": true
+    },
+    {
+      "name": "cache-suite-int8_convrot-rgba-normal",
+      "seconds": 54.40865612030029,
+      "success": true
+    },
+    {
+      "name": "cache-suite-int8_convrot-rgba-fast",
+      "seconds": 21.23252511024475,
+      "success": true
+    },
+    {
+      "name": "cache-suite-int8_convrot-edit-normal",
+      "seconds": 56.39954710006714,
+      "success": true
+    },
+    {
+      "name": "cache-suite-int8_convrot-edit-fast",
+      "seconds": 25.136392831802368,
+      "success": true
+    }
+  ]
+}

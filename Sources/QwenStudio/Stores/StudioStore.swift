@@ -10,6 +10,7 @@ final class StudioStore: ObservableObject {
     @Published var quality: Quality = .standard
     @Published var transparent = false
     @Published var steps = 40
+    @Published var fastMode = false
     @Published var references: [URL] = []
     @Published var creations: [Creation] = []
     @Published var selected: UUID?
@@ -104,6 +105,7 @@ final class StudioStore: ObservableObject {
         guard !generating else { return }
         prompt = creation.prompt; aspect = creation.aspect; quality = creation.quality
         transparent = creation.transparent; steps = creation.steps
+        fastMode = creation.fastMode ?? false
         references = []; selected = nil; showLibrary = false; formatPreset = creation.formatPreset
     }
     func export(_ creation: Creation) {
@@ -138,7 +140,7 @@ final class StudioStore: ObservableObject {
         else { error = "Seed must be between 0 and 4,294,967,295, or empty."; return }
         let request = GenerationRequest(prompt: prompt.trimmingCharacters(in: .whitespacesAndNewlines), aspect: aspect, quality: quality,
                                         transparent: transparent, steps: steps, seed: seed, references: references,
-                                        formatPreset: references.isEmpty ? formatPreset : nil)
+                                        formatPreset: references.isEmpty ? formatPreset : nil, fastMode: fastMode)
         generating = true; cancelling = false; progress = 0; previewImage = nil; startedAt = Date(); selected = nil; showLibrary = false
         phase = "Loading the model and preparing your prompt …"; promptID = nil
         generationTask = Task {
@@ -188,11 +190,12 @@ final class StudioStore: ObservableObject {
                         guard NSImage(data: data) != nil else { throw StudioError.message("The engine did not return a valid image.") }
                         let creation = Creation(id: UUID(), date: Date(), prompt: request.prompt, fileName: UUID().uuidString + ".png", seed: seed,
                                                 aspect: request.aspect, quality: request.quality, transparent: request.transparent, steps: request.steps, referenceCount: request.references.count,
-                                                formatPreset: request.formatPreset)
+                                                formatPreset: request.formatPreset, fastMode: request.fastMode)
                         try ImageOutput.fittedPNG(data, preset: request.formatPreset).write(to: url(for: creation), options: .atomic)
                         let updated = [creation] + creations
                         try JSONEncoder().encode(updated).write(to: library.appendingPathComponent("library.json"), options: .atomic)
                         creations = updated; selected = creation.id; phase = "Done"; progress = 1
+                        await engine.releaseMemoryIfNeeded()
                         break
                     }
                     try await Task.sleep(for: .seconds(1))

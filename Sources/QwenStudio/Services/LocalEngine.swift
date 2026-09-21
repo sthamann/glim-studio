@@ -21,6 +21,12 @@ struct LocalEngine {
     func health() async throws {
         _ = try await request("system_stats")
     }
+    func releaseMemoryIfNeeded() async {
+        guard ProcessInfo.processInfo.physicalMemory < 32 * 1_073_741_824 else { return }
+        // The finished image has already been downloaded and saved locally.
+        // Keep the server alive, but release cached models between jobs.
+        _ = try? await request("free", body: ["unload_models": true, "free_memory": true])
+    }
     func upload(_ file: URL) async throws -> String {
         let boundary = "Lichtbild-" + UUID().uuidString
         var req = URLRequest(url: baseURL.appendingPathComponent("upload/image"))

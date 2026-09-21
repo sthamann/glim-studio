@@ -28,6 +28,13 @@ struct Checks {
         let d = try JSONDecoder().decode(Creation.self, from: JSONEncoder().encode(c))
         precondition(d.id == c.id && d.prompt == c.prompt && d.referenceCount == 2)
         precondition(d.formatPreset == nil) // Existing libraries have no preset field.
+        precondition(d.fastMode == nil)
+        precondition(t2i["30"] == nil)
+        var fast = req
+        fast.fastMode = true
+        let fastGraph = Workflow.make(fast, uploaded: [])
+        precondition(input(fastGraph,"30")["reuse_threshold"] as? Double == 0.2)
+        precondition((input(fastGraph,"6")["model"] as! [Any])[0] as? String == "30")
         let space = CGColorSpace(name: CGColorSpace.sRGB)!
         let context = CGContext(data: nil, width: 64, height: 64, bitsPerComponent: 8, bytesPerRow: 0,
                                 space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
@@ -54,8 +61,10 @@ struct Checks {
         precondition(input(bannerGraph,"5")["width"] as? Int == FormatPreset.xHeader.renderSize(quality: .standard).0)
         var savedPreset = c
         savedPreset.formatPreset = .linkedInArticle
+        savedPreset.fastMode = true
         let decodedPreset = try JSONDecoder().decode(Creation.self, from: JSONEncoder().encode(savedPreset))
         precondition(decodedPreset.formatPreset == .linkedInArticle)
+        precondition(decodedPreset.fastMode == true)
         _ = try JSONSerialization.data(withJSONObject: edit)
         let compact = Workflow.make(req, uploaded: [], precision: .compact)
         precondition(input(compact,"1")["unet_name"] as? String == "qwen_image_2.1_int8_convrot.safetensors")

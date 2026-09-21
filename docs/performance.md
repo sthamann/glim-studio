@@ -24,7 +24,34 @@ A new paired engineering probe used the same ceramic-cup prompt, seed 42, BF16 w
 | 512² | 29.14 s | 12.06 s | 2.42× |
 | 1024² | 125.60 s | 47.24 s | 2.66× |
 
-Settings: reuse threshold 0.2, start 0.15, end 0.95. The 512² run skipped 25 of 40 model evaluations. The cup composition remained similar, but shape, edges and surface details changed. These are single examples, **not evidence of equivalent quality**. Text, faces, reference editing and RGBA still need controlled comparisons before shipping a fast mode. EasyCache is **not enabled in the released app**. This is separate from Qwen's already-active prefix cache.
+Settings: reuse threshold 0.2, start 0.15, end 0.95. The 512² run skipped 25 of 40 model evaluations. The cup composition remained similar, but shape, edges and surface details changed. These are single examples, **not evidence of equivalent quality**. Version 0.3 exposes an explicitly experimental Fast mode, **off by default**, separate from Qwen's already-active prefix cache. See the compact-model comparison below for additional checks.
+
+## Smaller-Mac memory work
+
+### Compact model Fast-mode checks
+
+Paired INT8/MPS runs at 512², 40 steps, seed 42, Euler/simple. Each prompt had a separate one-step warm-up before the normal/fast pair. Both cases therefore reuse prompt encoding/model loading. One-second polling is included; these are individual engineering examples, not a statistical quality benchmark.
+
+| Case | Normal | Fast | Speed ratio | Visual check |
+|---|---:|---:|---:|---|
+| Poster text | 54.28 s | 20.12 s | 2.70× | HELLO GLIM legible in both; softer edges in Fast |
+| Fictional portrait | 54.33 s | 22.12 s | 2.46× | Requested face/glasses/scarf present; fine features change |
+| Transparent fox sticker | 54.41 s | 21.23 s | 2.56× | RGBA with alpha 0…255 in both; Fast introduces more edge artifacts |
+| Cup recolouring edit | 56.40 s | 25.14 s | 2.24× | Blue recolouring succeeds in both; detail differs |
+
+Fast is useful for exploration but is not a quality-preserving optimization. Keep normal mode for final typography, clean cutout edges or identity-sensitive edits. Reproduce with `script/benchmark_cache_suite.py --port <private-engine-port>`; the test uses only generic prompts and an explicitly provided generic cup fixture. It does not modify the app's user-facing library.
+
+[Actual comparison images](benchmarks/README.md) · [Machine-readable measurements](benchmarks/2026-09-21.json)
+
+### Idle cache release
+
+After this suite, the normal engine's physical footprint fell from **9.39 GiB to 0.57 GiB** within five seconds of requesting `unload_models` and `free_memory`. The engine remained alive. Below 32 GB, version 0.3 requests this release after downloading and saving each finished image. This reduces memory held **between jobs**, not generation peak, and makes the next job reload its models. The separate JSON observation records transient release behaviour as well as the final value.
+
+### Sequential q4 experiment
+
+Sequentially loading a prequantized 4-bit text encoder, transformer and VAE, then decoding overlapping tiles, completed 512² and 1024² / 20-step text-to-image probes at **5.62 and 5.79 GiB lifetime peak physical footprint**, including startup. Both passed a 6 GiB process-footprint watchdog on the M3 Ultra. Whole-process times were 19.01 and 69.89 seconds on this hardware. This is not a small-Mac simulation or proof of equivalent image quality.
+
+The q4 encoder intentionally overrides an upstream quality precaution; the probe lacks the production editing/alpha/preview lifecycle. It therefore remains outside the released app backend. [Full experiment and reproduction](small-macs.md).
 
 ## Optimization priorities
 
