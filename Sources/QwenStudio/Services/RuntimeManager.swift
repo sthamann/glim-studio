@@ -37,7 +37,14 @@ final class RuntimeManager: ObservableObject {
                 throw StudioError.message("This Mac has insufficient memory for this model. 24 GB or more is recommended; 16 GB is experimental.")
             }
             try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
-            if !installed { try await install() }
+            if !installed {
+                let available = try root.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]).volumeAvailableCapacityForImportantUsage
+                let required: Int64 = precision == .full ? 45_000_000_000 : 28_000_000_000
+                if let available, available < required {
+                    throw StudioError.message("Please free at least \(required / 1_000_000_000) GB of disk space for the model and its runtime, then try setup again.")
+                }
+                try await install()
+            }
             try await start()
         } catch {
             failure = error.localizedDescription

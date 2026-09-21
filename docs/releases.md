@@ -9,7 +9,7 @@
 
 The updater feed is `https://github.com/sthamann/glim-studio/releases/latest/download/appcast.xml`. Archives use immutable version-specific download URLs. Never overwrite an existing version's archive. Never change or regenerate the update key casually: installed apps trust its public key.
 
-The Ed25519 private key is stored under account `glim-studio-updates` in the maintainer's macOS Keychain and as the encrypted Actions secret `SPARKLE_PRIVATE_KEY`. The repository contains only the public key. `generate_appcast` signs both the archive and the feed; `SURequireSignedFeed` is enabled.
+The Ed25519 private key is stored under account `glim-studio-updates` in the maintainer's macOS Keychain and as the encrypted Actions secret `SPARKLE_PRIVATE_KEY`. The repository contains only the public key. `generate_appcast` signs both the archive and the feed; `SURequireSignedFeed` and its prerequisite `SUVerifyUpdateBeforeExtraction` are enabled.
 
 Application updates preserve downloaded models and image history in Application Support. Existing early Lichtbild Studio installations reuse their original Application Support folder to preserve data.
 

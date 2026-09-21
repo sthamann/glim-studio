@@ -1,3 +1,5 @@
+Update verification is now enabled before archive extraction, completing the signed-feed security requirements.
+
 Glim Studio turns your ideas into images, entirely on your Mac.
 
 - Native English macOS interface with text-to-image, reference edits and transparent PNGs.

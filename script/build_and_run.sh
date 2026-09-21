@@ -51,6 +51,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<'PLIST'
 <key>SUEnableAutomaticChecks</key><true/>
 <key>SUAllowsAutomaticUpdates</key><true/>
 <key>SURequireSignedFeed</key><true/>
+<key>SUVerifyUpdateBeforeExtraction</key><true/>
 <key>NSPrincipalClass</key><string>NSApplication</string>
 <key>NSHighResolutionCapable</key><true/>
 <key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/></dict>
@@ -64,6 +65,7 @@ xattr -r -d com.apple.FinderInfo "$APP_BUNDLE" 2>/dev/null || true
 xattr -r -d com.apple.ResourceFork "$APP_BUNDLE" 2>/dev/null || true
 codesign --force --deep --sign - "$APP_BUNDLE"
 codesign --verify --deep --strict "$APP_BUNDLE"
+python3 script/check_bundle.py "$APP_BUNDLE"
 ditto "$APP_BUNDLE" "$OUTPUT_BUNDLE"
 APP_BUNDLE="$OUTPUT_BUNDLE"
 case "$MODE" in
