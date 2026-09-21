@@ -1,0 +1,56 @@
+name: Build and release macOS app
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.8.22'
+      - name: Check contracts
+        run: ./script/check.sh
+      - name: Build app
+        run: ./script/build_and_run.sh --build-only
+      - name: Archive app
+        run: |
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent 'outputs/Glim Studio.app' dist/Glim-Studio-arm64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Glim-Studio-arm64
+          path: dist/Glim-Studio-arm64.zip
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.8.22'
+      - name: Verify release version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: test "$TAG" = "v$(cat VERSION)"
+      - name: Build and sign update
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          test -n "$SPARKLE_PRIVATE_KEY"
+          ./script/package_release.sh
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" dist/*.zip dist/appcast.xml dist/SHA256SUMS --title "Glim Studio ${TAG#v}" --notes-file docs/release-notes.md

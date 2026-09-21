@@ -1,0 +1,11 @@
+Glim Studio uses Qwen-Image-2.1 as a separately downloaded local model.
+Qwen is licensed under the Qwen RESEARCH LICENSE AGREEMENT, Copyright (c) 2026 Hangzhou Tongyi Laboratory Technology Co., Ltd. All Rights Reserved.
+The model license is included in Qwen-LICENSE.txt. Commercial use requires a separate license from the rights holder.
+
+The private engine is ComfyUI, downloaded separately from https://github.com/Comfy-Org/ComfyUI at commit c194dd00cd42aa18d9dbf27d977bf6b85d9ea565. ComfyUI is licensed under GPL-3.0; its complete corresponding source and license are retained in the installed runtime/ComfyUI directory.
+
+The app bundles uv, https://github.com/astral-sh/uv, Copyright Astral Software Inc., licensed under MIT or Apache-2.0. See uv-LICENSE-MIT and uv-LICENSE-APACHE.
+
+The app is an independent interface. It is not an official Qwen or Alibaba application.
+
+Sparkle (https://sparkle-project.org) provides secure updates. Its license is included as Sparkle-LICENSE.txt.

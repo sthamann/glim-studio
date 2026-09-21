@@ -1,0 +1,15 @@
+.build/
+work/
+dist/
+outputs/*.app/
+outputs/*.zip
+.DS_Store
+__pycache__/
+.env*
+*.p12
+*.p8
+*.key
+*.pem
+*.mobileprovision
+outputs/
+.codex/
